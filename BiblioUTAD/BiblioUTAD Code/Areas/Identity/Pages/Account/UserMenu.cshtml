@@ -1,0 +1,142 @@
+﻿@page
+@model BiblioUTAD.Areas.Identity.Pages.Account.UserMenuModel
+@{
+    ViewData["Title"] = "A Minha Conta";
+}
+
+<section class="user-menu container">
+    <h1 class="user-menu__title">A Minha Conta</h1>
+    <div class="user-menu__content grid">
+        <!-- Histórico de Requisições -->
+        <div class="user-menu__history">
+            <h2>Histórico De Requisições</h2>
+            @if (Model.Emprestimos != null && Model.Emprestimos.Any())
+            {
+                <div class="emprestimos-list">
+                    @foreach (var emprestimo in Model.Emprestimos)
+                    {
+                        var isAtrasado = !emprestimo.Devolvido && emprestimo.DataDevolucao.HasValue && emprestimo.DataDevolucao.Value < DateTime.Now;
+
+                        <div class="emprestimo-card">
+                            <div class="emprestimo-card__img-box">
+                                @if (!string.IsNullOrEmpty(emprestimo.Livro.CaminhoImagem))
+                                {
+                                    <img src="@emprestimo.Livro.CaminhoImagem" alt="@emprestimo.Livro.Titulo" class="emprestimo-card__img" />
+                                }
+                                else
+                                {
+                                    <img src="~/img/default.jpg" alt="Imagem padrão" class="emprestimo-card__img" />
+                                }
+                            </div>
+                            <div class="emprestimo-card__info">
+                                <h3 class="emprestimo-card__title">@emprestimo.Livro.Titulo</h3>
+                                <p class="emprestimo-card__author">@emprestimo.Livro.Autor</p>
+                                <p class="emprestimo-card__date">Data de Requisição: @emprestimo.DataEmprestimo.ToShortDateString()</p>
+                                <p class="emprestimo-card__date">
+                                    Data de Devolução: @(emprestimo.DataDevolucao?.ToShortDateString() ?? "-")
+                                </p>
+                                <p class="emprestimo-card__status">
+                                    @if (emprestimo.Devolvido)
+                                    {
+                                        <span class="status status--returned">Livro Entregue a @emprestimo.DataDevolucao?.ToShortDateString()</span>
+                                    }
+                                    else if (isAtrasado)
+                                    {
+                                        <span class="status status--overdue">Livro em Atraso</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="status status--pending">Livro em Utilização</span>
+                                    }
+                                </p>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- Paginação -->
+                <div class="emprestimos-pagin__pagination">
+                    @if (Model.TotalPages > 1)
+                    {
+                        <ul class="pagination">
+                            @if (Model.PageNumber > 1)
+                            {
+                                <li>
+                                    <a asp-page="./UserMenu" asp-route-PageNumber="@(Model.PageNumber - 1)" class="emprestimos-pagin__button">&laquo; Anterior</a>
+                                </li>
+                            }
+
+                            @for (int i = 1; i <= Model.TotalPages; i++)
+                            {
+                                <li class="@(i == Model.PageNumber ? "active" : "")">
+                                    <a asp-page="./UserMenu" asp-route-PageNumber="@i" class="emprestimos-pagin__button">@i</a>
+                                </li>
+                            }
+
+                            @if (Model.PageNumber < Model.TotalPages)
+                            {
+                                <li>
+                                    <a asp-page="./UserMenu" asp-route-PageNumber="@(Model.PageNumber + 1)" class="emprestimos-pagin__button">Próxima &raquo;</a>
+                                </li>
+                            }
+                        </ul>
+                    }
+                </div>
+            }
+            else
+            {
+                <p>Não tem empréstimos registrados.</p>
+            }
+        </div>
+
+        <!-- Editar Perfil -->
+        <div class="user-menu__profile">
+            <h2>Editar Perfil</h2>
+            <form method="post" class="user-menu__profile">
+                <!-- Nome -->
+                <div class="user-menu__form-group">
+                    <label for="UserName">Nome</label>
+                    <input type="text" id="UserName" name="UserName" value="@Model.UserName" class="user-menu__input" />
+                    <span asp-validation-for="UserName" class="text-danger"></span>
+                </div>
+
+                <!-- Email (desativado para edição) -->
+                <div class="user-menu__form-group">
+                    <label for="Email">Email</label>
+                    <input type="email" id="Email" value="@Model.Email" class="user-menu__input" disabled />
+                    <input type="hidden" name="Email" value="@Model.Email" />
+                </div>
+
+                <!-- Telefone -->
+                <div class="user-menu__form-group">
+                    <label for="PhoneNumber">Telemóvel</label>
+                    <input type="tel" id="PhoneNumber" name="PhoneNumber" value="@Model.PhoneNumber" class="user-menu__input" />
+                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                </div>
+
+                <!-- Palavra-Passe Atual -->
+                <div class="user-menu__form-group">
+                    <label for="CurrentPassword">Palavra-Passe Atual</label>
+                    <input type="password" id="CurrentPassword" name="CurrentPassword" class="user-menu__input" placeholder="Palavra-Passe Atual" />
+                    <span asp-validation-for="CurrentPassword" class="text-danger"></span>
+                </div>
+
+                <!-- Nova Palavra-Passe -->
+                <div class="user-menu__form-group">
+                    <label for="NewPassword">Nova Palavra-Passe</label>
+                    <input type="password" id="NewPassword" name="NewPassword" class="user-menu__input" placeholder="Nova Palavra-Passe" />
+                    <span asp-validation-for="NewPassword" class="text-danger"></span>
+                </div>
+
+                <!-- Botões de ação -->
+                <div class="user-menu__actions">
+                    <button type="submit" class="user-menu__save-button">Guardar Alterações</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

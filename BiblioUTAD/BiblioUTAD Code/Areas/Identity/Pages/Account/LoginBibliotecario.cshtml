@@ -1,0 +1,40 @@
+﻿@page
+@model BiblioUTAD.Areas.Identity.Pages.Account.LoginBibliotecarioModel
+@{
+    ViewData["Title"] = "Login Bibliotecário";
+}
+
+<div class="login">
+    <form class="login__form grid" method="post">
+        <h3 class="login__title">Entrar como Bibliotecário</h3>
+        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+        <div class="login__group grid">
+            <div>
+                <label asp-for="Input.UserName" class="login__label">Nome</label>
+                <input asp-for="Input.UserName" class="login__input" autocomplete="username" placeholder="Insira o seu Nome" />
+                <span asp-validation-for="Input.UserName" class="text-danger"></span>
+            </div>
+            <div>
+                <label asp-for="Input.Password" class="login__label">Palavra-Passe</label>
+                <input asp-for="Input.Password" class="login__input" autocomplete="current-password" placeholder="Insira a sua Palavra-Passe" />
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
+            </div>
+        </div>
+
+        <button id="login-submit" type="submit" class="loginbiblio__button button">Entrar</button>
+        <span class="register__signup">És Bibliotecário e nâo tens conta? <a asp-page="./RegisterBibliotecario">Regista-te</a></span>
+        <span class="login__signup">
+            Não és Bibliotecário? <a asp-page="./Login">Entrar como Leitor</a>
+        </span>
+    </form>
+
+    <!-- Close Button -->
+    <a href="/" class="login__close">
+        <i class="ri-close-line"></i>
+    </a>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

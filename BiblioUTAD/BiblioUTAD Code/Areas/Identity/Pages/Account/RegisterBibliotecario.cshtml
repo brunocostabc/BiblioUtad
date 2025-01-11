@@ -1,0 +1,52 @@
+﻿@page
+@model BiblioUTAD.Areas.Identity.Pages.Account.RegisterBibliotecarioModel
+@{
+    ViewData["Title"] = "Registo como Bibliotecário";
+}
+
+<div class="register show-register">
+    <form id="registerForm" class="register__form grid" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+        <h3 class="register__title">Registo como Bibliotecário</h3>
+        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+        <div class="register__group grid">
+            <div>
+                <label asp-for="Input.UserName" class="register__label">Nome</label>
+                <input asp-for="Input.UserName" class="register__input" autocomplete="username" aria-required="true" placeholder="Insira o seu Nome" />
+                <span asp-validation-for="Input.UserName" class="text-danger"></span>
+            </div>
+            <div>
+                <label asp-for="Input.PhoneNumber" class="register__label">Telemóvel</label>
+                <input asp-for="Input.PhoneNumber" class="register__input" autocomplete="tel" aria-required="true" placeholder="Insira o seu Telemóvel" />
+                <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+            </div>
+
+            <div>
+                <label asp-for="Input.Password" class="register__label">Palavra-Passe</label>
+                <input asp-for="Input.Password" class="register__input" autocomplete="new-password" aria-required="true" placeholder="Insira a sua Palavra-Passe" />
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
+            </div>
+            <div>
+                <label asp-for="Input.ConfirmPassword" class="register__label">Confirme a Palavra-Passe</label>
+                <input asp-for="Input.ConfirmPassword" class="register__input" autocomplete="new-password" aria-required="true" placeholder="Confirme a sua Palavra-Passe" />
+                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+            </div>
+        </div>
+
+        <button id="registerSubmit" type="submit" class="register__button button">Registar</button>
+
+        <div class="register__links">
+            <span class="register__signup">Já tens conta? <a asp-page="./LoginBibliotecario">Entrar</a></span>
+            <span class="register__signup">Queres ser Leitor? <a asp-page="./Register">Regista-te</a></span>
+        </div>
+    </form>
+
+    <!-- Close Button -->
+    <a href="/" class="register__close">
+        <i class="ri-close-line"></i>
+    </a>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

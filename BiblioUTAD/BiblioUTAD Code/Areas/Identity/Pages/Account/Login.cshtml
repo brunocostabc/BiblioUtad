@@ -1,0 +1,54 @@
+﻿@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Entrar";
+}
+
+<div class="login show-login">
+    <form id="account" class="login__form grid" method="post">
+        <h3 class="login__title">Entrar</h3>
+        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+        <div class="login__group grid">
+            <div>
+                <label asp-for="Input.Email" class="login__label">E-Mail</label>
+                <input asp-for="Input.Email" class="login__input" autocomplete="email" aria-required="true" placeholder="Insira o seu E-Mail" />
+                <span asp-validation-for="Input.Email" class="text-danger"></span>
+            </div>
+            <div>
+                <label asp-for="Input.Password" class="login__label">Palavra-Passe</label>
+                <input asp-for="Input.Password" class="login__input" autocomplete="current-password" aria-required="true" placeholder="Insira a sua Palavra-Passe" />
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="login__group grid">
+            <div class="login__checkbox">
+                <input class="login__checkbox-input" asp-for="Input.RememberMe" id="remember-me" type="checkbox" />
+                <label class="login__label-inline" for="remember-me">Lembrar-me</label>
+            </div>
+        </div>
+
+        <a id="forgot-password" class="login__forgot" asp-page="./ForgotPassword">Esqueceu-se da palavra-passe?</a>
+
+        <button id="login-submit" type="submit" class="login__button button">Entrar</button>
+
+        <span class="login__signup">
+            És Bibliotecário? <a asp-page="./LoginBibliotecario">Entrar</a>
+        </span>
+
+        <span class="login__signup">
+            Não tens conta? <a asp-page="./Register">Criar</a>
+        </span>
+    </form>
+
+    <!-- Close Button -->
+    <a href="/" class="login__close">
+        <i class="ri-close-line"></i>
+    </a>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

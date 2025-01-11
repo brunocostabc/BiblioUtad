@@ -1,0 +1,18 @@
+﻿@page
+@model BiblioUTAD.Areas.Identity.Pages.Account.BlockedReasonModel
+@{
+    ViewData["Title"] = "Conta Bloqueada";
+}
+
+<section class="section account-blocked container">
+    <h1 class="section__title">Conta Bloqueada</h1>
+    <p class="account-blocked__message">
+        A sua conta foi bloqueada por um administrador.
+    </p>
+    <p class="account-blocked__reason">
+        <strong>Motivo do Bloqueio:</strong> @Model.Reason
+    </p>
+    <p class="account-blocked__contact">
+        Para mais informações, entre em contacto com o suporte.
+    </p>
+</section>

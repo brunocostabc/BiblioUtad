@@ -1,0 +1,132 @@
+﻿@model IEnumerable<BiblioUTAD.Models.Livro>
+
+@{
+    ViewData["Title"] = "Catálogo de Livros";
+    var currentPage = ViewBag.CurrentPage ?? 1;
+    var totalPages = ViewBag.TotalPages ?? 1;
+    var searchTerm = ViewBag.SearchTerm ?? "";
+    var sortCriteria = ViewBag.SortCriteria ?? "titulo";
+    var viewMode = ViewBag.ViewMode ?? "grid";
+}
+
+<section class="catalogoL__container container">
+    <div class="catalogoL__data">
+        <h1 class="catalogoL__title">@ViewData["Title"]</h1>
+        <p>Explore a nossa vasta coleção de livros disponíveis na <strong>BiblioUTAD</strong>.</p>
+    </div>
+
+    <!-- Barra de Pesquisa e Ordenação -->
+    <div class="catalogo__controls">
+        <div class="catalogo__search-container">
+            <input type="text" id="searchInput" class="catalogo__search" placeholder="Pesquisar por título ou autor..." value="@searchTerm">
+            <button type="button" class="catalogo__search-button" id="searchButton">
+                <i class="ri-search-line"></i> Pesquisar
+            </button>
+        </div>
+
+        <select id="sortSelect" class="catalogo__sort">
+            <option value="titulo" selected="@(sortCriteria == "titulo")">Ordenar por Título</option>
+            <option value="autor" selected="@(sortCriteria == "autor")">Ordenar por Autor</option>
+            <option value="preco" selected="@(sortCriteria == "preco")">Ordenar por Preço</option>
+        </select>
+
+        <div class="catalogo__view-options">
+            <button type="button" class="view-button grid-view @(viewMode == "grid" ? "active" : "")" data-view="grid">
+                <i class="ri-grid-fill"></i>
+            </button>
+            <button type="button" class="view-button list-view @(viewMode == "list" ? "active" : "")" data-view="list">
+                <i class="ri-list-check"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="listacatalogo__grid @(viewMode == "list" ? "list-view" : "")" id="catalogoGrid">
+        @foreach (var livro in Model)
+        {
+            <div class="listacatalogo__item">
+                <div class="listacatalogo__img-box">
+                    <a href="@Url.Action("Detalhes", "Catalogo", new { id = livro.Id })">
+                        <img src="@(livro.CaminhoImagem ?? Url.Content("~/img/default.jpg"))" alt="@livro.Titulo" class="listacatalogo__img">
+                    </a>
+                </div>
+                <div class="listacatalogo__info">
+                    <h3 class="listacatalogo__title">
+                        <a href="@Url.Action("Detalhes", "Catalogo", new { id = livro.Id })">@livro.Titulo</a>
+                    </h3>
+                    <p class="listacatalogo__autor">@livro.Autor</p>
+                    <p class="listacatalogo__price">€@livro.Preco.ToString("F2")</p>
+                    <p class="listacatalogo__descricao">@livro.Descricao</p>
+                    @if (livro.NumeroExemplares > 0)
+                    {
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <a href="@Url.Action("Requisitar", "Emprestimo", new { livroId = livro.Id })" class="listacatalogo__button">Requisitar</a>
+                        }
+                        else
+                        {
+                            <a href="/Identity/Account/Login" class="listacatalogo__button">Faça Login para Requisitar</a>
+                        }
+                    }
+                    else
+                    {
+                        <button class="listacatalogo__button" disabled>Sem Stock</button>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Paginação -->
+    <div class="pagination-container">
+        @if (totalPages > 1)
+        {
+            <ul class="pagination">
+                @if (currentPage > 1)
+                {
+                    <li><a href="@Url.Action("Index", new { page = currentPage - 1, searchTerm, sortCriteria, viewMode })">&laquo; Anterior</a></li>
+                }
+
+                @for (int i = 1; i <= totalPages; i++)
+                {
+                    <li class="@(i == currentPage ? "active" : "")">
+                        <a href="@Url.Action("Index", new { page = i, searchTerm, sortCriteria, viewMode })">@i</a>
+                    </li>
+                }
+
+                @if (currentPage < totalPages)
+                {
+                    <li><a href="@Url.Action("Index", new { page = currentPage + 1, searchTerm, sortCriteria, viewMode })">Próxima &raquo;</a></li>
+                }
+            </ul>
+        }
+    </div>
+</section>
+
+<script>
+    // Função para atualizar a página com os parâmetros atuais
+    function updatePage(useSearchTerm = true) {
+        const searchTerm = useSearchTerm ? encodeURIComponent(document.getElementById('searchInput').value) : '';
+        const sortCriteria = document.getElementById('sortSelect').value;
+        const viewMode = document.querySelector('.view-button.active').dataset.view;
+        window.location.href = `@Url.Action("Index")?searchTerm=${searchTerm}&sortCriteria=${sortCriteria}&viewMode=${viewMode}`;
+    }
+
+    // Evento do botão "Pesquisar"
+    document.getElementById('searchButton').addEventListener('click', function () {
+        updatePage(true);
+    });
+
+    // Evento para a ordenação
+    document.getElementById('sortSelect').addEventListener('change', function () {
+        updatePage();
+    });
+
+    // Evento para alternar entre Grid e List View
+    document.querySelectorAll('.view-button').forEach(button => {
+        button.addEventListener('click', () => {
+            document.querySelectorAll('.view-button').forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            updatePage(false);
+        });
+    });
+</script>

@@ -1,0 +1,105 @@
+﻿@model IEnumerable<BiblioUTAD.Models.Livro>
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Gestão Do Catálogo";
+
+}
+
+<header class="admin-content__header">
+    <h1>@ViewData["Title"]</h1>
+</header>
+
+<section class="admin-content__dashboard">
+    <div class="admin-catalogo">
+        <div class="top-bar">
+            <div class="search-container">
+                <input type="text"
+                       id="search-input"
+                       name="searchTerm"
+                       placeholder="Procurar Livros"
+                       class="search-bar"
+                       oninput="searchBooks()" />
+            </div>
+            <a asp-controller="AdminCatalogo" asp-action="AdicionarLivro" enctype="multipart/form-data" class=" btn-add-book">Adicionar Livro</a>
+        </div>
+
+        <table class="catalogo-table">
+            <thead>
+                <tr>
+                    <th>Imagem</th>
+                    <th>Título</th>
+                    <th>Autor</th>
+                    <th>Gênero</th>
+                    <th>ISBN</th>
+                    <th>Preço (€)</th>
+                    <th>Exemplares</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="catalogo-table-body">
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var livro in Model)
+                    {
+                        <tr>
+                            <td>
+                                @if (!string.IsNullOrEmpty(livro.CaminhoImagem))
+                                {
+                                    <img src="@livro.CaminhoImagem" alt="Imagem do Livro" style="width: 50px; height: auto; border-radius: 5px;" />
+                                }
+                                else
+                                {
+                                    <span>Sem imagem</span>
+                                }
+                            </td>
+                            <td>@livro.Titulo</td>
+                            <td>@livro.Autor</td>
+                            <td>@livro.Genero</td>
+                            <td>@livro.ISBN</td>
+                            <td>@livro.Preco</td>
+                            <td>@livro.NumeroExemplares</td>
+                            <td>
+                                <div class="actions">
+                                    <a asp-action="EditarLivro" asp-route-id="@livro.Id" class="btn-edit">Editar</a>
+                                    <form asp-action="EliminarLivro" method="post" style="display: inline;" onsubmit="return confirmarEliminacao();">
+                                        <input type="hidden" name="id" value="@livro.Id" />
+                                        <button type="submit" class="btn-delete">Eliminar</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="8">Nenhum livro encontrado no catálogo.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Função para enviar a pesquisa ao servidor via AJAX
+        function searchBooks() {
+            const searchTerm = document.getElementById('search-input').value;
+
+            fetch(`/AdminCatalogo/Index?searchTerm=${searchTerm}`) // Aponta para o controlador correto
+                .then(response => response.text())
+                .then(html => {
+                    // Atualiza o conteúdo da tabela
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newBody = doc.querySelector('#catalogo-table-body').innerHTML;
+                    document.querySelector('#catalogo-table-body').innerHTML = newBody;
+                })
+                .catch(error => console.error('Erro ao buscar livros:', error));
+        }
+
+        function confirmarEliminacao() {
+            return confirm("Tem a certeza que deseja eliminar este livro?");
+        }
+    </script>
+</section>

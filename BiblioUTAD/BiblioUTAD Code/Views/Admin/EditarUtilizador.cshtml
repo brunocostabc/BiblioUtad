@@ -1,0 +1,81 @@
+﻿@model BiblioUTAD.Controllers.AdminController.EditUserViewModel
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Editar Utilizador";
+}
+
+<header class="edit-user-header">
+    <h1>@ViewData["Title"]</h1>
+</header>
+
+<section class="user-edit-content__dashboard">
+    <form asp-action="EditarUtilizador" method="post" class="edit-user-form-container">
+        <input type="hidden" asp-for="Id" />
+        <div class="form-group">
+            <label asp-for="UserName">Nome</label>
+            <input asp-for="UserName" class="form-control" placeholder="Digite o nome do utilizador" />
+            <span asp-validation-for="UserName" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Email">E-mail</label>
+            <input asp-for="Email" class="form-control" readonly />
+            <small class="form-text text-muted">O e-mail não pode ser alterado.</small>
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="PhoneNumber">Número de Telemóvel</label>
+            <input asp-for="PhoneNumber" class="form-control" readonly />
+            <small class="form-text text-muted">O número de telemóvel não pode ser alterado.</small>
+            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Role">Cargo</label>
+            <select asp-for="Role" class="form-control">
+                <option value="Leitor">Leitor</option>
+                <option value="Bibliotecario">Bibliotecário</option>
+                <option value="Administrador">Administrador</option>
+            </select>
+            <span asp-validation-for="Role" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="IsEmailConfirmed">Status da Conta</label>
+            <select asp-for="IsEmailConfirmed" class="form-control" id="IsEmailConfirmed">
+                <option value="true">Ativo</option>
+                <option value="false">Bloqueada</option>
+            </select>
+        </div>
+
+        <div class="form-group" id="blocked-reason-group" style="display: none;">
+            <label asp-for="BlockedReason">Motivo do Bloqueio</label>
+            <textarea asp-for="BlockedReason" class="form-control"></textarea>
+            <span asp-validation-for="BlockedReason" class="text-danger"></span>
+        </div>
+
+        <div class="edit-user-buttons">
+            <button type="submit" class="btn btn-save">Guardar</button>
+            <a asp-action="Utilizadores" class="btn btn-cancel">Cancelar</a>
+        </div>
+    </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const statusDropdown = document.getElementById('IsEmailConfirmed');
+            const blockedReasonGroup = document.getElementById('blocked-reason-group');
+
+            const toggleBlockedReason = () => {
+                if (statusDropdown.value === "false") { // "false" significa bloqueado
+                    blockedReasonGroup.style.display = "block";
+                } else {
+                    blockedReasonGroup.style.display = "none";
+                }
+            };
+
+            // Inicializar o estado da caixa ao carregar a página
+            toggleBlockedReason();
+
+            // Adicionar um evento para alternar a exibição
+            statusDropdown.addEventListener('change', toggleBlockedReason);
+        });
+    </script>
+</section>

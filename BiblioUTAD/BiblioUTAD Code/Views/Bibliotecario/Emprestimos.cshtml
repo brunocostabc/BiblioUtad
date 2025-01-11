@@ -1,0 +1,120 @@
+﻿@model IEnumerable<BiblioUTAD.Models.Emprestimo>
+
+@{
+    Layout = "~/Views/Shared/_BibliotecarioLayout.cshtml";
+    ViewData["Title"] = "Gestão de Empréstimos";
+}
+
+<header class="admin-content__header">
+    <h1>@ViewData["Title"]</h1>
+</header>
+
+<section class="admin-content__dashboard">
+    <div class="admin-users">
+        <div class="emprestimos-top-bar">
+            <div class="emprestimos-search-container">
+                <input type="text"
+                       id="search-input"
+                       name="searchTerm"
+                       placeholder="Procurar Empréstimos"
+                       class="emprestimos-search-bar"
+                       value="@ViewContext.HttpContext.Request.Query["searchTerm"]"
+                       oninput="searchLoans()" />
+            </div>
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="emprestimos-no-results">
+                <p>Nenhum empréstimo encontrado.</p>
+            </div>
+        }
+        else
+        {
+            <table class="emprestimos-table">
+                <thead>
+                    <tr>
+                        <th>Imagem</th>
+                        <th>Livro</th>
+                        <th>Utilizador</th>
+                        <th>Data de Empréstimo</th>
+                        <th>Data de Devolução</th>
+                        <th>Estado</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="loans-table-body">
+                    @foreach (var emprestimo in Model)
+                    {
+                        var status = emprestimo.Devolvido
+                        ? "Devolvido"
+                        : (emprestimo.DataEmprestimo.AddDays(15) < DateTime.Now ? "Em Atraso" : "Emprestado");
+
+                        var statusClass = status.ToLower().Replace(" ", "-");
+
+                        <tr>
+                            <td>
+                                @if (!string.IsNullOrEmpty(emprestimo.Livro.CaminhoImagem))
+                                {
+                                    <img src="@emprestimo.Livro.CaminhoImagem" alt="Imagem do Livro" style="width: 50px; height: auto; border-radius: 5px;" />
+                                }
+                                else
+                                {
+                                    <span>Sem imagem</span>
+                                }
+                            </td>
+                            <td>@emprestimo.Livro.Titulo</td>
+                            <td>@emprestimo.UserName</td>
+                            <td>@emprestimo.DataEmprestimo.ToShortDateString()</td>
+                            <td>@(emprestimo.DataDevolucao?.ToShortDateString() ?? "-")</td>
+                            <td>
+                                <span class="emprestimos-status @statusClass">
+                                    @if (status == "Emprestado")
+                                    {
+                                        <i class="ri-time-line"></i> @status
+                                    }
+                                    else if (status == "Devolvido")
+                                    {
+                                        <i class="ri-checkbox-circle-line"></i> @status
+                                    }
+                                    else if (status == "Em Atraso")
+                                    {
+                                        <i class="ri-hourglass-line"></i> @status
+                                    }
+                                </span>
+                            </td>
+                            <td>
+                                @if (!emprestimo.Devolvido)
+                                {
+                                    <a href="@Url.Action("Devolver", new { id = emprestimo.Id })" class="emprestimos-btn-return">Devolver</a>
+                                }
+                                else
+                                {
+                                    <a href="@Url.Action("Eliminar", new { id = emprestimo.Id })" class="emprestimos-btn-delete" title="Eliminar">
+                                        <i class="ri-delete-bin-line"></i>
+                                    </a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+
+    <script>
+        function searchLoans() {
+            const searchTerm = document.getElementById('search-input').value;
+
+            fetch(`/EmprestimoAdmin/Index?searchTerm=${searchTerm}`)
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newBody = doc.querySelector('#loans-table-body').innerHTML;
+                    document.querySelector('#loans-table-body').innerHTML = newBody;
+                })
+                .catch(error => console.error('Erro ao buscar empréstimos:', error));
+        }
+    </script>
+</section>

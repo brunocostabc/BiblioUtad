@@ -1,0 +1,29 @@
+﻿@model BiblioUTAD.Models.Livro
+
+@{
+    ViewData["Title"] = "Requisitar Livro";
+}
+
+<section class="requisitar-livro__container container">
+    <h2 class="requisitar-livro__title">📚 Confirmar Requisição de Livro</h2>
+
+    <div class="requisitar-livro__card">
+        <div class="requisitar-livro__details">
+            <p><strong>Título:</strong> @Model.Titulo</p>
+            <p><strong>Autor:</strong> @Model.Autor</p>
+            <p><strong>Gênero:</strong> @Model.Genero</p>
+            <p><strong>Data de Lançamento:</strong> @Model.DataLancamento.ToString("dd/MM/yyyy")</p>
+        </div>
+
+        <form asp-action="ConfirmarRequisicao" asp-controller="Emprestimo" method="post">
+            <input type="hidden" name="LivroId" value="@Model.Id" />
+            <button type="submit" class="button requisitar-button">
+                <i class="fas fa-check-circle"></i> Confirmar Requisição
+            </button>
+        </form>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
+}

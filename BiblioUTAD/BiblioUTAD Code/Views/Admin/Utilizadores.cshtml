@@ -1,0 +1,90 @@
+﻿@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Gestão dos Utilizadores";
+}
+
+<header class="admin-content__header">
+    <h1>@ViewData["Title"]</h1>
+</header>
+
+<section class="admin-content__dashboard">
+    <div class="admin-users">
+        <div class="top-bar">
+            <div class="search-container">
+                <input type="text"
+                       id="search-input"
+                       name="searchTerm"
+                       placeholder="Procurar Utilizadores"
+                       class="search-bar"
+                       value="@ViewContext.HttpContext.Request.Query["searchTerm"]"
+                       oninput="searchUsers()" />
+            </div>
+            <a asp-action="CriarAdministrador" class="btn-create-admin">Criar Administrador</a>
+        </div>
+
+
+        <table class="users-table">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Email</th>
+                    <th>Cargo</th>
+                    <th>Número de Telemóvel</th>
+                    <th>Estado</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="users-table-body">
+                @foreach (var userWithRole in Model)
+                {
+                    <tr>
+                        <td>@userWithRole.User.UserName</td>
+                        <td>@userWithRole.User.Email</td>
+                        <td>@userWithRole.Role</td>
+                        <td>@(string.IsNullOrEmpty(userWithRole.User.PhoneNumber) ? "Não disponível" : userWithRole.User.PhoneNumber)</td>
+                        <td>
+                            <span class="status @((userWithRole.User.EmailConfirmed ? "ativo" : "bloqueado"))">
+                                @(userWithRole.User.EmailConfirmed ? "Ativo" : "Bloqueada")
+                            </span>
+                        </td>
+                        <td>
+                            <div class="actions">
+                                <!-- Botão Editar -->
+                                <a asp-action="EditarUtilizador" asp-route-id="@userWithRole.User.Id" class="btn-edit">Editar</a>
+
+                                <!-- Botão Eliminar -->
+                                <form asp-action="Eliminar" method="post" style="display: inline;" onsubmit="return confirmarEliminacao();">
+                                    <input type="hidden" name="id" value="@userWithRole.User.Id" />
+                                    <button type="submit" class="btn-delete">Eliminar</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+
+    <script>
+        // Função para enviar a pesquisa ao servidor via AJAX
+        function searchUsers() {
+            const searchTerm = document.getElementById('search-input').value;
+
+            fetch(`/Admin/Utilizadores?searchTerm=${searchTerm}`)
+                .then(response => response.text())
+                .then(html => {
+                    // Substitui apenas o conteúdo da tabela
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newBody = doc.querySelector('#users-table-body').innerHTML;
+                    document.querySelector('#users-table-body').innerHTML = newBody;
+                })
+                .catch(error => console.error('Erro ao procurar Utilizadores:', error));
+        }
+
+        function confirmarEliminacao() {
+            return confirm("Tem a certeza que deseja eliminar este utilizador?");
+        }
+    </script>
+</section>

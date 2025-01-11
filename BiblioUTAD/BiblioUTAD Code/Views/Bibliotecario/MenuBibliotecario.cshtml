@@ -1,0 +1,70 @@
+﻿@{
+    Layout = "~/Views/Shared/_BibliotecarioLayout.cshtml";
+    ViewData["Title"] = "Menu do Bibliotecario";
+}
+
+<header class="admin-content__header">
+</header>
+
+<section class="admin-content__dashboard admin-menu-dashboard">
+    <div class="admin-menu-welcome">
+        <h2>Bem-vindo ao Painel do Bibliotecário</h2>
+        <p>Use o menu ao lado para gerenciar as seguintes opções disponíveis:</p>
+    </div>
+
+    <!-- Dashboard Cards -->
+    <div class="admin-dashboard">
+        <!-- Total de Livros -->
+        <div class="dashboard-card">
+            <i class="ri-book-line dashboard-card-icon"></i>
+            <h3>Total de Livros</h3>
+            <p>@ViewData["TotalLivros"]</p>
+        </div>
+
+        <!-- Livros Requisitados -->
+        <div class="dashboard-card">
+            <i class="ri-file-list-line dashboard-card-icon"></i>
+            <h3>Livros Requisitados</h3>
+            <p>@ViewData["LivrosRequisitados"]</p>
+        </div>
+
+        <!-- Livros em Atraso -->
+        <div class="dashboard-card">
+            <i class="ri-timer-line dashboard-card-icon"></i>
+            <h3>Livros em Atraso</h3>
+            <p>@ViewData["LivrosAtrasados"]</p>
+        </div>
+
+        <!-- Total de Utilizadores -->
+        <div class="dashboard-card">
+            <i class="ri-user-line dashboard-card-icon"></i>
+            <h3>Total de Utilizadores</h3>
+            <p>@ViewData["TotalUtilizadores"]</p>
+        </div>
+    </div>
+
+    <!-- Cards para navegação rápida -->
+    <div class="admin-menu-cards">
+        <div class="admin-card">
+            <a asp-action="Utilizadores" asp-controller="Bibliotecario">
+                <i class="ri-user-line"></i>
+                <h3>Utilizadores</h3>
+                <p>Visualize as contas dos Utilizadores.</p>
+            </a>
+        </div>
+        <div class="admin-card">
+            <a asp-action="Index" asp-controller="EmprestimoAdmin">
+                <i class="ri-file-list-line"></i>
+                <h3>Empréstimos</h3>
+                <p>Gerencie todos os Empréstimos realizados pelos Utilizadores.</p>
+            </a>
+        </div>
+        <div class="admin-card">
+            <a asp-controller="AdminCatalogo" asp-action="Index">
+                <i class="ri-book-line"></i>
+                <h3>Catálogo</h3>
+                <p>Gerencie o catálogo de livros e recursos disponíveis.</p>
+            </a>
+        </div>
+    </div>
+</section>

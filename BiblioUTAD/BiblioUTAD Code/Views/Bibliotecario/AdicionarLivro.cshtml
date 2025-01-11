@@ -1,0 +1,208 @@
+﻿@model BiblioUTAD.Models.Livro
+
+@{
+    Layout = "~/Views/Shared/_BibliotecarioLayout.cshtml";
+    ViewData["Title"] = "Adicionar Livro";
+}
+
+<header class="new-book-header">
+    <h1>Adicionar Livro</h1>
+</header>
+
+<section class="new-book-container">
+    <form asp-action="AdicionarLivro" method="post" enctype="multipart/form-data">
+        <div class="new-book-group">
+            <label for="Imagem">Imagem do Livro</label>
+            <input type="file" id="Imagem" name="Imagem" class="form-control" accept="image/*" />
+            <small id="imagem-warning" style="color: red; display: none;">Nenhuma imagem foi selecionada.</small>
+        </div>
+        <div class="new-book-group">
+            <label for="Titulo">Título</label>
+            <input type="text" id="Titulo" name="Titulo" class="form-control" required />
+        </div>
+        <div class="new-book-group">
+            <label for="Autor">Autor</label>
+            <select id="Autor" name="Autor" class="form-control" required>
+                <option value="" disabled selected>Selecione um autor</option>
+                @foreach (var autor in ViewBag.Autores as List<string>)
+                {
+                    <option value="@autor">@autor</option>
+                }
+                <option value="novo">Adicionar novo autor</option>
+            </select>
+        </div>
+        <div id="novo-autor-container" style="display:none;">
+            <label for="NovoAutor">Novo Autor</label>
+            <input type="text" id="NovoAutor" class="form-control" placeholder="Digite o novo autor" />
+            <button type="button" id="GuardarAutor" class="btn btn-primary">Guardar Autor</button>
+        </div>
+
+        <div class="new-book-group">
+            <label for="Genero">Gênero</label>
+            <select id="Genero" name="Genero" class="form-control" required>
+                <option value="" disabled selected>Selecione um gênero</option>
+                @foreach (var genero in ViewBag.Generos as List<string>)
+                {
+                    <option value="@genero">@genero</option>
+                }
+                <option value="novo">Adicionar novo gênero</option>
+            </select>
+        </div>
+        <div id="novo-genero-container" style="display:none;">
+            <label for="NovoGenero">Novo Gênero</label>
+            <input type="text" id="NovoGenero" class="form-control" placeholder="Digite o novo gênero" />
+            <button type="button" id="GuardarGenero" class="btn btn-primary">Guardar Gênero</button>
+        </div>
+        <div class="new-book-group">
+            <label for="ISBN">ISBN</label>
+            <input type="text" id="ISBN" name="ISBN" class="form-control" required />
+            <span id="isbn-error" style="color:red; display:none;">Formato de ISBN inválido. Use ISBN-10 ou ISBN-13.</span>
+        </div>
+        <div class="new-book-group">
+            <label for="DataLancamento">Data de Lançamento</label>
+            <input type="date" id="DataLancamento" name="DataLancamento" class="form-control" required />
+        </div>
+
+        <div class="new-book-group">
+            <label for="Descricao">Descrição</label>
+            <textarea id="Descricao" name="Descricao" class="form-control" rows="5" required></textarea>
+        </div>
+        <div class="new-book-group">
+            <label for="Preco">Preço (€)</label>
+            <input type="number" step="0.01" id="Preco" name="Preco" class="form-control" required />
+            <small style="color: gray; font-size: 0.9em;">Por favor, insira o preço no formato: 1499 para 14,99€ ou 488 para 4,88€.</small>
+        </div>
+        <div class="new-book-group">
+            <label for="NumeroExemplares">Número de Exemplares</label>
+            <input type="number" id="NumeroExemplares" name="NumeroExemplares" class="form-control" required />
+        </div>
+        <div class="new-book-buttons">
+            <button type="submit" class="btn btn-save">Guardar</button>
+            <a asp-action="Index" class="btn btn-cancel">Cancelar</a>
+        </div>
+    </form>
+
+    <script>
+                document.getElementById("Autor").addEventListener("change", function () {
+            if (this.value === "novo") {
+                document.getElementById("novo-autor-container").style.display = "block";
+            } else {
+                document.getElementById("novo-autor-container").style.display = "none";
+            }
+        });
+
+        document.getElementById("GuardarAutor").addEventListener("click", function () {
+            const novoAutor = document.getElementById("NovoAutor").value;
+
+            if (!novoAutor.trim()) {
+                alert("O nome do autor é obrigatório.");
+                return;
+            }
+
+            fetch("/AdminCatalogo/AdicionarAutor", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ Nome: novoAutor }),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        alert("Autor adicionado com sucesso!");
+                        const select = document.getElementById("Autor");
+                        const option = document.createElement("option");
+                        option.value = novoAutor;
+                        option.textContent = novoAutor;
+                        select.appendChild(option);
+                        select.value = novoAutor;
+                        document.getElementById("novo-autor-container").style.display = "none";
+                        document.getElementById("NovoAutor").value = "";
+                    } else {
+                        alert(data.message || "Erro ao adicionar autor.");
+                    }
+                })
+                .catch((error) => console.error("Erro:", error));
+        });
+
+
+
+                document.getElementById("Genero").addEventListener("change", function () {
+            if (this.value === "novo") {
+                document.getElementById("novo-genero-container").style.display = "block";
+            } else {
+                document.getElementById("novo-genero-container").style.display = "none";
+            }
+        });
+
+        document.getElementById("GuardarGenero").addEventListener("click", function () {
+            const novoGenero = document.getElementById("NovoGenero").value;
+
+            if (!novoGenero.trim()) {
+                alert("O nome do gênero é obrigatório.");
+                return;
+            }
+
+            fetch("/AdminCatalogo/AdicionarGenero", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ Nome: novoGenero }),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        alert("Gênero adicionado com sucesso!");
+                        const select = document.getElementById("Genero");
+                        const option = document.createElement("option");
+                        option.value = novoGenero;
+                        option.textContent = novoGenero;
+                        select.appendChild(option);
+                        select.value = novoGenero;
+                        document.getElementById("novo-genero-container").style.display = "none";
+                        document.getElementById("NovoGenero").value = "";
+                    } else {
+                        alert(data.message || "Erro ao adicionar gênero.");
+                    }
+                })
+                .catch((error) => console.error("Erro:", error));
+        });
+
+        document.getElementById("ISBN").addEventListener("blur", function () {
+        const isbn = this.value.trim();
+        const isbnError = document.getElementById("isbn-error");
+
+        // Regex para validar ISBN-10 ou ISBN-13
+        const isbn10Regex = /^\d{9}[0-9Xx]$/;
+        const isbn13Regex = /^\d{13}$/;
+
+        if (isbn10Regex.test(isbn) || isbn13Regex.test(isbn)) {
+            isbnError.style.display = "none";
+        } else {
+            isbnError.style.display = "block";
+        }
+    });
+
+            document.querySelector('form').addEventListener('submit', function () {
+            const precoField = document.getElementById("Preco");
+            if (precoField) {
+                let precoValue = precoField.value.replace(",", "").replace(".", "");
+                if (!isNaN(precoValue) && precoValue.length > 2) {
+                    // Converter para incluir duas casas decimais
+                    precoValue = (parseInt(precoValue) / 100).toFixed(2);
+                    precoField.value = precoValue.replace(".", ","); // Ajustar para cultura PT se necessário
+                }
+            }
+        });
+
+                document.getElementById("Imagem").addEventListener("change", function () {
+            const imagemWarning = document.getElementById("imagem-warning");
+            if (!this.files || this.files.length === 0) {
+                imagemWarning.style.display = "block"; // Exibe aviso se nenhum arquivo foi selecionado
+            } else {
+                imagemWarning.style.display = "none"; // Remove o aviso se houver um arquivo
+            }
+        });
+    </script>
+</section>

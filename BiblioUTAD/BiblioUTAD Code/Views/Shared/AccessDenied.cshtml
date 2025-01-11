@@ -1,0 +1,10 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Acesso Negado";
+}
+
+<section class="access-denied-container">
+    <h1 class="access-denied-title">Acesso Negado</h1>
+    <p class="access-denied-message">Não tem permissão para entrar nesta página.</p>
+    <a href="@Url.Action("Index", "Home")" class="access-denied-link">Voltar para a Página Inicial</a>
+</section>

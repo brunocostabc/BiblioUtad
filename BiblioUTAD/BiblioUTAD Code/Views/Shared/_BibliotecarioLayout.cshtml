@@ -1,0 +1,126 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> UserManager
+@inject SignInManager<IdentityUser> SignInManager
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+
+    <!--=============== FICHEIROS CSS ===============-->
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <!-- Remix Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="~/css/swiper-bundle.min.css" asp-append-version="true" />
+
+    <!-- Caminho do Ficheiro CSS -->
+    <link rel="stylesheet" href="~/css/styles.css" asp-append-version="true" />
+</head>
+<body>
+    <!--==================== HEADER ====================-->
+    <header class="admin-header">
+        <a href="/" class="nav__logo">
+            <i class="ri-book-2-line"></i> BiblioUTAD
+        </a>
+
+        <div class="nav__actions">
+            <!-- Nome do utilizador como botão de menu -->
+            <a asp-area="Identity" asp-page="/Account/UserMenu" class="nav__user-name">@User.Identity.Name</a>
+
+            <!-- Ícone de tema -->
+            <a class="nav__icon">
+                <i class="ri-moon-line change-theme" id="theme-button"></i>
+            </a>
+
+            <!-- Botão de logout -->
+            <form method="post" asp-area="Identity" asp-page="/Account/Logout" class="nav__logout-form">
+                <button type="submit" class="nav__logout-button">Sair</button>
+            </form>
+
+            <!-- Botão Sair do Menu Bibliotecário -->
+            <a href="/" class="admin-header__logout">
+                Sair do Menu Bibliotecário
+            </a>
+        </div>
+    </header>
+
+    <!--==================== LAYOUT DO BIBLIOTECÁRIO ====================-->
+    <div class="admin-layout">
+        <!-- Barra Lateral -->
+        <aside class="admin-sidebar">
+            <div class="admin-sidebar__header">
+                <!-- Link para a página MenuBibliotecario -->
+                <a asp-area="" asp-controller="Bibliotecario" asp-action="MenuBibliotecario" class="admin-sidebar__header-link">
+                    Menu Do Bibliotecário
+                </a>
+            </div>
+
+            <!-- Navegação da Barra Lateral -->
+            <nav>
+                <div>
+                    <ul class="admin-sidebar__menu">
+                        <li class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Bibliotecario" && ViewContext.RouteData.Values["action"]?.ToString() == "Utilizadores" ? "active" : "")">
+                            <a asp-area="" asp-controller="Bibliotecario" asp-action="Utilizadores">
+                                <i class="ri-user-line"></i> Utilizadores
+                            </a>
+                        </li>
+                        <li class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "EmprestimoAdmin" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")">
+                            <a asp-controller="EmprestimoAdmin" asp-action="Index">
+                                <i class="ri-file-list-line"></i> Empréstimos
+                            </a>
+                        </li>
+                        <li class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "AdminCatalogo" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")">
+                            <a asp-controller="AdminCatalogo" asp-action="Index">
+                                <i class="ri-book-line"></i> Catálogo
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Conteúdo Principal -->
+        <main class="admin-content">
+            @RenderBody()
+        </main>
+    </div>
+
+    <!--==================== JAVASCRIPT ====================-->
+    <!-- jQuery -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <!-- jQuery Validação -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.0/jquery.validate.unobtrusive.min.js"></script>
+
+    <!-- Bootstrap Bundle -->
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Outros Scripts -->
+    <script src="~/js/swiper-bundle.min.js"></script>
+    <script src="~/js/scrollreveal.min.js"></script>
+    <script src="~/js/main.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+    <!--========== SCROLL UP ==========-->
+    <a href="#" class="scrollup" id="scroll-up">
+        <i class="ri-arrow-up-line"></i>
+    </a>
+
+    <!-- Funcionalidade Alternar Tema -->
+    <script>
+        const themeButton = document.getElementById("theme-button");
+        themeButton?.addEventListener("click", () => {
+            document.body.classList.toggle("dark-theme");
+        });
+    </script>
+</body>
+</html>

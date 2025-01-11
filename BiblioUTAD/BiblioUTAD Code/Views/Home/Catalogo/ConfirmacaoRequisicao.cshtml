@@ -1,0 +1,33 @@
+﻿@model BiblioUTAD.Models.Emprestimo
+
+@{
+    ViewData["Title"] = "Requisição Confirmada";
+}
+
+<section class="requisitar-livro__container container">
+    <h2 class="requisitar-livro__title">✅ Requisição Confirmada!</h2>
+    <p class="requisitar-livro__alert" style="color: #d9534f; font-weight: bold; margin-top: 1rem;">
+        📍 Por favor, dirija-se à biblioteca para fazer o levantamento do livro.
+    </p>
+
+    <div class="requisitar-livro__card">
+        <div class="requisitar-livro__details">
+            <p><strong>Título:</strong> @Model.Livro.Titulo</p>
+            <p><strong>Autor:</strong> @Model.Livro.Autor</p>
+            <p><strong>Data de Empréstimo:</strong> @Model.DataEmprestimo.ToShortDateString()</p>
+            <p><strong>Data de Devolução Prevista:</strong> @Model.DataDevolucao?.ToShortDateString()</p>
+        </div>
+
+        <div class="requisitar-livro__alert">
+            <p>⚠️ Por favor, devolva o livro até a data indicada. Se ultrapassar a data de devolução, será notificado ao entrar no site.</p>
+        </div>
+
+        <a href="@Url.Action("Index", "Catalogo")" class="button requisitar-button">
+            <i class="fas fa-check-circle"></i> Voltar ao Catálogo
+        </a>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
+}

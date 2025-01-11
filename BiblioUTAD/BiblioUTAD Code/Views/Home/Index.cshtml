@@ -1,0 +1,191 @@
+﻿@model IEnumerable<BiblioUTAD.Models.Livro>
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<!--==================== MAIN ====================-->
+<main class="main">
+    <!--==================== HOME ====================-->
+    <section class="home section" id="home">
+        <div class="home__container container grid">
+            <div class="home__data">
+                <h1 class="home__title">
+                    Procure e Requisite o<br>
+                    Seu Livro Ideal!
+                </h1>
+
+                <p class="home__description">
+                    Descubra e requisite os melhores livros dos seus autores
+                    favoritos, explore centenas de títulos em todas as
+                    categorias e muito mais.
+                </p>
+
+                <a href="/Catalogo" class="button">Explora Agora</a>
+            </div>
+
+            <div class="home__images">
+                <div class="home__swiper swiper">
+                    <div class="swiper-wrapper">
+                        @if (Model != null && Model.Any())
+                        {
+                            @foreach (var livro in Model)
+                            {
+                                <article class="home__article swiper-slide">
+                                    <img src="@(livro.CaminhoImagem ?? "~/img/default.jpg")"
+                                         alt="@livro.Titulo" class="home__img">
+                                </article>
+                            }
+                        }
+                        else
+                        {
+                            <p class="no-books-message">Nenhum livro disponível no momento.</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!--==================== Serviços ====================-->
+    <section class="services section">
+        <div class="services__container container grid">
+            <article class="services__card">
+                <i class="ri-truck-line"></i>
+                <h3 class="services__title">Serviços de Qualidade</h3>
+                <p class="services__description">Rapidez e Qualidade é a nossa Prioridade</p>
+            </article>
+
+            <article class="services__card">
+                <i class="ri-lock-2-line"></i>
+                <h3 class="services__title">Requisitos Seguros</h3>
+                <p class="services__description">Requisitos 100% Confiáveis</p>
+            </article>
+
+            <article class="services__card">
+                <i class="ri-customer-service-2-line"></i>
+                <h3 class="services__title">Suporte 24 Horas</h3>
+                <p class="services__description">Fala Connosco a Qualquer Hora</p>
+            </article>
+        </div>
+    </section>
+
+    <!--==================== Catálogo ====================-->
+    <section class="catalogo section" id="catalogo">
+        <div class="catalogo__container container grid">
+            <div class="catalogo__data">
+                <h2 class="catalogo__title section_title">
+                    Conhece o Nosso Catálogo
+                </h2>
+
+                <p class="catalogo__description">
+                    Acesse ao nosso catálogo e descubra os melhores livros
+                    dos seus autores favoritos.
+                </p>
+
+                <a href="/Catalogo" class="button">Aceder Agora</a>
+            </div>
+
+            <div class="catalogo__images">
+                <img id="catalogo-img-1" src="~/img/default.jpg" alt="Livro 1" class="catalogo__img-1">
+                <img id="catalogo-img-2" src="~/img/default.jpg" alt="Livro 2" class="catalogo__img-2">
+            </div>
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch('/Home/GetLivrosCatalogo')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length >= 2) {
+                        // Primeiro livro
+                        document.getElementById('catalogo-img-1').src = data[0].caminhoImagem || '/img/default.jpg';
+                        document.getElementById('catalogo-img-1').alt = data[0].titulo || 'Livro 1';
+
+                        // Segundo livro
+                        document.getElementById('catalogo-img-2').src = data[1].caminhoImagem || '/img/default.jpg';
+                        document.getElementById('catalogo-img-2').alt = data[1].titulo || 'Livro 2';
+                    } else {
+                        // Caso não haja livros suficientes
+                        document.getElementById('catalogo-img-1').src = '/img/default.jpg';
+                        document.getElementById('catalogo-img-1').alt = 'Nenhum livro disponível';
+
+                        document.getElementById('catalogo-img-2').src = '/img/default.jpg';
+                        document.getElementById('catalogo-img-2').alt = 'Nenhum livro disponível';
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar livros:', error);
+                    // Fallback em caso de erro
+                    document.getElementById('catalogo-img-1').src = '/img/default.jpg';
+                    document.getElementById('catalogo-img-1').alt = 'Erro ao carregar livro';
+
+                    document.getElementById('catalogo-img-2').src = '/img/default.jpg';
+                    document.getElementById('catalogo-img-2').alt = 'Erro ao carregar livro';
+                });
+        });
+    </script>
+
+
+    <!--==================== Lançamentos ====================-->
+    <section class="new section" id="novos">
+        <h2 class="section__title">
+            Lançamentos Recentes
+        </h2>
+
+        <div class="new__container container">
+            <div class="new__swiper swiper">
+                <div class="swiper-wrapper">
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var livro in Model)
+                        {
+                            <a href="/Catalogo" class="new__card swiper-slide">
+                                <img src="@(livro.CaminhoImagem ?? "~/img/default.jpg")"
+                                     alt="@livro.Titulo" class="new__img">
+                                <div>
+                                    <h2 class="new__title">@livro.Titulo</h2>
+                                    <div class="new__prices">
+                                        <span class="new__catalogo">€@livro.Preco.ToString("F2")</span>
+                                    </div>
+
+                                    <div class="new__stars">
+                                        <i class="ri-star-fill"></i>
+                                        <i class="ri-star-fill"></i>
+                                        <i class="ri-star-fill"></i>
+                                        <i class="ri-star-fill"></i>
+                                        <i class="ri-star-half-fill"></i>
+                                    </div>
+                                </div>
+                            </a>
+                        }
+                    }
+                    else
+                    {
+                        <p class="no-books-message">Nenhum lançamento disponível no momento.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!--==================== Newsletter ====================-->
+    <section class="join section" id="newsletter">
+        <div class="join__container">
+            <img src="~/img/newsletter.jpg" alt="image" class="join__bg">
+
+            <div class="join__data container grid">
+                <h2 class="join__title section__title">
+                    Subscreve-te na nossa Newsletter <br>
+                    e Fica a Par dos Últimos Lançamentos
+                </h2>
+
+                <form asp-action="Subscribe" asp-controller="Home" method="post" class="join__form">
+                    <input type="email" name="email" placeholder="Digite o seu email" class="join__input" required>
+                    <button type="submit" class="join__button">Subscrever</button>
+                </form>
+            </div>
+        </div>
+    </section>
+</main>

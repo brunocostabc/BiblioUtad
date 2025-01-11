@@ -1,0 +1,27 @@
+﻿@model List<BiblioUTAD.Controllers.AdminController.UserWithRolesViewModel>
+
+<tbody id="users-table-body">
+    @foreach (var userWithRole in Model)
+    {
+        <tr>
+            <td>@userWithRole.User.UserName</td>
+            <td>@userWithRole.User.Email</td>
+            <td>@userWithRole.Role</td>
+            <td>@DateTime.Now.ToShortDateString()</td>
+            <td>
+                <span class="status @((userWithRole.User.EmailConfirmed ? "ativo" : "bloqueado"))">
+                    @(userWithRole.User.EmailConfirmed ? "Ativo" : "Bloqueada")
+                </span>
+            </td>
+            <td>
+                <div class="actions">
+                    <a asp-action="EditarUtilizador" asp-route-id="@userWithRole.User.Id" class="btn-edit">Editar</a>
+                    <form asp-action="Eliminar" method="post" style="display: inline;" onsubmit="return confirmarEliminacao();">
+                        <input type="hidden" name="id" value="@userWithRole.User.Id" />
+                        <button type="submit" class="btn-delete">Eliminar</button>
+                    </form>
+                </div>
+            </td>
+        </tr>
+    }
+</tbody>

@@ -1,0 +1,70 @@
+﻿@model IEnumerable<BiblioUTAD.Models.Notificacao>
+
+@{
+    ViewData["Title"] = "Notificações";
+}
+
+<section class="notificacoes__container container">
+    <h1 class="notificacoes__title">🔔 Notificações</h1>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="notificacoes__actions-bar">
+            <form asp-action="MarcarTodasComoLidas" method="post" class="notificacoes__form-inline">
+                <button type="submit" class="notificacoes__minimal-button">
+                    <i class="fas fa-check-double"></i> Marcar Todas como Lidas
+                </button>
+            </form>
+
+            <form asp-action="EliminarTodas" method="post" class="notificacoes__form-inline">
+                <button type="submit" class="notificacoes__minimal-button delete">
+                    <i class="fas fa-trash-alt"></i> Eliminar Todas
+                </button>
+            </form>
+        </div>
+
+        <div class="notificacoes__list">
+            @foreach (var notificacao in Model)
+            {
+                <div class="notificacoes__item @(notificacao.Lida ? "notificacoes__item--lida" : "notificacoes__item--nao-lida")">
+                    <div class="notificacoes__content">
+                        <p class="notificacoes__mensagem">@notificacao.Mensagem</p>
+                        <p class="notificacoes__data">@notificacao.DataCriacao.ToString("dd/MM/yyyy HH:mm")</p>
+                    </div>
+
+                    <div class="notificacoes__actions">
+                        @if (!notificacao.Lida)
+                        {
+                            <form asp-action="MarcarComoLida" method="post">
+                                <input type="hidden" name="id" value="@notificacao.Id" />
+                                <button type="submit" class="notificacoes__icon-button" title="Marcar como lida">
+                                    <i class="fas fa-check-circle"></i>
+                                </button>
+                            </form>
+                        }
+                        <form asp-action="Eliminar" method="post">
+                            <input type="hidden" name="id" value="@notificacao.Id" />
+                            <button type="submit" class="notificacoes__icon-button delete" title="Eliminar">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p class="notificacoes__empty">📭 Não há notificações no momento.</p>
+    }
+
+    <div class="notificacoes__back">
+        <a href="@Url.Action("Index", "Home")" class="notificacoes__minimal-button back">
+            <i class="fas fa-arrow-left"></i> Voltar à Página Inicial
+        </a>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
+}
